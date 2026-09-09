@@ -8,7 +8,7 @@
     "dev": "nodemon index.js"
   },
   "author": "hzx",
-  "license": "MIT",
+  "license": "mit",
   "repository": {
     "type": "git",
     "url": "666"
@@ -22,7 +22,7 @@
     "express": "^4.19.2",
     "node-fetch": "^3.3.2"
   },
-  "devdependencies": {
+  "devDependencies": {
     "nodemon": "^3.1.0"
   }
 }
