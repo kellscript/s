@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seu Site - Exemplo</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--red:#ff0055;--red2:#ff3366;--glow:0 0 16px #ff005588,0 0 36px #ff336644;}
+html{scroll-behavior:smooth;}
+body{font-family:'Orbitron',sans-serif;background:#000;color:#fff;overflow-x:hidden;min-height:100vh;}
+canvas{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;}
+.page-wrap{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh;transition:opacity .4s,filter .4s;}
+.page-wrap.blurred{opacity:.25;filter:blur(3px);pointer-events:none;user-select:none;}
+header{text-align:center;padding:clamp(32px,8vw,64px) 20px clamp(20px,5vw,40px);}
+.avatar-sm{width:clamp(64px,15vw,90px);height:clamp(64px,15vw,90px);border-radius:50%;object-fit:cover;border:2px solid var(--red);box-shadow:var(--glow);margin-bottom:clamp(12px,3vw,20px);display:block;margin-left:auto;margin-right:auto;}
+header h1{font-size:clamp(1.6rem,6vw,3rem);font-weight:700;color:var(--red);letter-spacing:.1em;text-shadow:0 0 10px var(--red),0 0 24px var(--red2);animation:glitch 5s infinite;}
+@keyframes glitch{0%,88%,100%{text-shadow:0 0 10px var(--red),0 0 24px var(--red2);}90%{text-shadow:3px 0 var(--red),-3px 2px var(--red2);filter:hue-rotate(8deg);}92%{text-shadow:-3px -2px var(--red),3px 2px var(--red2);filter:hue-rotate(-8deg);}94%{text-shadow:2px 1px var(--red),-2px -1px var(--red2);filter:none;}}
+header p{margin-top:clamp(5px,1.5vw,10px);font-size:clamp(.65rem,2.2vw,.9rem);color:#777;letter-spacing:.07em;}
+main{flex:1;padding:0 clamp(12px,4vw,40px) 40px;}
+.section-title{text-align:center;font-size:clamp(.75rem,2.5vw,1rem);color:var(--red);letter-spacing:.15em;margin:clamp(24px,5vw,44px) 0 clamp(14px,3vw,24px);text-shadow:0 0 8px var(--red2);}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:clamp(12px,3vw,20px);max-width:960px;margin:0 auto;}
+.card{background:rgba(255,0,60,.04);border:1px solid #ff005544;border-radius:16px;padding:clamp(16px,4vw,24px);display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden;transition:transform .35s,box-shadow .35s,border-color .35s;}
+.card::before{content:'';position:absolute;inset:0;border-radius:16px;background:radial-gradient(ellipse at top left,#ff005512,transparent 60%);pointer-events:none;animation:pulse 3s infinite alternate;}
+@keyframes pulse{from{opacity:.5;}to{opacity:1;}}
+.card:hover{transform:translateY(-5px) scale(1.02);box-shadow:var(--glow);border-color:#ff005599;}
+.card h2{font-size:clamp(.8rem,2.5vw,1.05rem);color:var(--red);letter-spacing:.06em;}
+.card p{font-size:clamp(.63rem,2vw,.8rem);color:#888;line-height:1.6;flex:1;}
+.method{display:inline-block;background:#ff005518;border:1px solid #ff005555;color:var(--red);font-size:.52rem;padding:3px 9px;border-radius:6px;letter-spacing:.14em;align-self:flex-start;font-weight:700;}
+.endpoint{font-family:monospace;font-size:.62rem;color:#ccc;background:rgba(255,255,255,.03);border:1px solid #ffffff0d;border-radius:8px;padding:8px 11px;word-break:break-all;letter-spacing:.01em;line-height:1.5;}
+.params{display:flex;flex-direction:column;gap:5px;}
+.param-row{display:flex;gap:8px;align-items:baseline;font-size:.58rem;}
+.param-name{color:#ff005599;font-weight:700;min-width:52px;flex-shrink:0;}
+.param-desc{color:#555;line-height:1.5;}
+.param-desc b{color:#777;}
+.btn{display:inline-block;padding:clamp(8px,2vw,11px) clamp(14px,4vw,20px);font-family:'Orbitron',sans-serif;font-size:clamp(.6rem,2vw,.75rem);font-weight:700;color:#fff;background:linear-gradient(135deg,#cc0044,var(--red));text-decoration:none;border-radius:9px;letter-spacing:.1em;text-transform:uppercase;box-shadow:0 0 10px #ff005566;transition:transform .25s,box-shadow .25s;align-self:flex-start;-webkit-tap-highlight-color:transparent;}
+.btn:hover{transform:translateY(-2px);box-shadow:var(--glow);}
+.btn:active{transform:scale(.96);}
+.menu-btn{position:fixed;top:14px;left:14px;width:clamp(42px,10vw,50px);height:clamp(42px,10vw,50px);background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:1001;box-shadow:var(--glow);transition:transform .2s,box-shadow .2s;border:none;-webkit-tap-highlight-color:transparent;}
+.menu-btn:hover{transform:scale(1.12);}
+.menu-btn:active{transform:scale(.92);}
+.menu-btn svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:2.5;stroke-linecap:round;}
+.side-menu{position:fixed;top:0;left:-290px;width:270px;height:100%;background:rgba(6,0,12,.97);border-right:1px solid #ff005566;box-shadow:4px 0 30px #ff005522;z-index:1000;transition:left .4s cubic-bezier(.4,0,.2,1);padding:70px 18px 30px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;}
+.side-menu.open{left:0;}
+.side-menu a{color:#ccc;text-decoration:none;font-size:clamp(.7rem,3vw,.88rem);padding:12px 16px;border:1px solid #ff005533;border-radius:10px;text-align:center;letter-spacing:.08em;transition:background .25s,color .25s,box-shadow .25s;-webkit-tap-highlight-color:transparent;}
+.side-menu a:hover{background:var(--red);color:#fff;box-shadow:0 0 14px var(--red);border-color:var(--red);}
+.menu-overlay{position:fixed;inset:0;z-index:999;background:transparent;display:none;}
+.menu-overlay.visible{display:block;}
+footer{position:relative;z-index:1;text-align:center;padding:16px 20px;border-top:1px solid #ff005522;color:#444;font-size:.62rem;letter-spacing:.06em;}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;}}
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+
+<button class="menu-btn" id="menuBtn" aria-label="Menu">
+  <svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+
+<div class="menu-overlay" id="overlay"></div>
+
+<div class="side-menu" id="sideMenu">
+  <a href="#" target="_blank">Link de Exemplo 1</a>
+  <a href="#" target="_blank">Link de Exemplo 2</a>
+  <a href="#" target="_blank">Link de Exemplo 3</a>
+  <a href="suporte.html">Exemplo - Suporte</a>
+</div>
+
+<div class="page-wrap" id="pageWrap">
+  <header>
+    <img class="avatar-sm" src="https://files.catbox.moe/pk7r94.jpg" alt="Avatar" loading="eager">
+    <h1>SEU SITE</h1>
+    <p>Texto explicativo do cabeçalho</p>
+  </header>
+
+  <main>
+
+    <p class="section-title">IA</p>
+    <div class="cards">
+      <div class="card">
+        <span class="method">GET</span>
+        <h2>Copilot</h2>
+        <div class="endpoint">/api/copilot?text=Eai+como+vai%3F&amp;model=gpt-5</div>
+        <div class="params">
+          <div class="param-row"><span class="param-name">text</span><span class="param-desc">Pergunta ou mensagem para o Copilot</span></div>
+          <div class="param-row"><span class="param-name">model</span><span class="param-desc"><b>gpt-5</b> · <b>think-deeper</b></span></div>
+        </div>
+        <p>Retorna a resposta do Microsoft Copilot com conversationId, model utilizado e citações.</p>
+        <a class="btn" href="/api/copilot?text=Ol%C3%A1!&model=gpt-5" target="_blank">Testar</a>
+      </div>
+    </div>
+
+    <p class="section-title">Busca</p>
+    <div class="cards">
+      <div class="card">
+        <span class="method">GET</span>
+        <h2>Google Imagens</h2>
+        <div class="endpoint">/api/search/gimage?query=Gatos&amp;limite=5</div>
+        <div class="params">
+          <div class="param-row"><span class="param-name">query</span><span class="param-desc">Termo de busca das imagens</span></div>
+          <div class="param-row"><span class="param-name">limite</span><span class="param-desc">Quantidade de resultados <b>(padrão: 5)</b></span></div>
+        </div>
+        <p>Retorna imagens com url, thumbnail, title e source de cada resultado encontrado.</p>
+        <a class="btn" href="/api/search/gimage?query=Gatos&limite=5" target="_blank">Testar</a>
+      </div>
+    </div>
+
+    <p class="section-title">Outros</p>
+    <div class="cards">
+      <div class="card">
+        <h2>Card de Exemplo 1</h2>
+        <p>Descrição explicativa do card 1, mostrando informações de exemplo.</p>
+        <a class="btn" href="#" target="_blank">Ação Exemplo</a>
+      </div>
+      <div class="card">
+        <h2>Card de Exemplo 2</h2>
+        <p>Descrição explicativa do card 2, com textos de exemplo para visualização.</p>
+        <a class="btn" href="#" target="_blank">Ação Exemplo</a>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>&copy; 2025 Seu Site — Texto explicativo do rodapé</footer>
+</div>
+
+<script>
+(function(){
+  const c=document.getElementById('c');
+  const ctx=c.getContext('2d');
+  let W,H,stars,drops;
+  const isMobile=innerWidth<600;
+  function init(){
+    W=c.width=innerWidth;H=c.height=innerHeight;
+    const n=isMobile?50:110;
+    stars=Array.from({length:n},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.2+.3,o:Math.random(),d:Math.random()*.008+.003}));
+    const cols=isMobile?18:36;
+    drops=Array.from({length:cols},(_,i)=>({x:(W/cols)*i,y:Math.random()*-H,s:Math.random()*7+8,sp:Math.random()*1.2+.7}));
+  }
+  let last=0;
+  function draw(ts){
+    if(ts-last<33){requestAnimationFrame(draw);return;}
+    last=ts;ctx.clearRect(0,0,W,H);
+    for(const s of stars){s.o+=s.d;if(s.o>1||s.o<0)s.d*=-1;ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,6.28);ctx.fillStyle=`rgba(255,255,255,${s.o.toFixed(2)})`;ctx.fill();}
+    for(const d of drops){ctx.font=`bold ${d.s}px monospace`;ctx.fillStyle='rgba(255,0,85,.16)';ctx.fillText(Math.random()>.5?'1':'0',d.x,d.y);d.y+=d.sp;if(d.y>H)d.y=Math.random()*-80;}
+    requestAnimationFrame(draw);
+  }
+  init();requestAnimationFrame(draw);
+  let ro;window.addEventListener('resize',()=>{clearTimeout(ro);ro=setTimeout(init,200);});
+  const menuBtn=document.getElementById('menuBtn');
+  const sideMenu=document.getElementById('sideMenu');
+  const overlay=document.getElementById('overlay');
+  const pageWrap=document.getElementById('pageWrap');
+  function openMenu(){sideMenu.classList.add('open');overlay.classList.add('visible');pageWrap.classList.add('blurred');}
+  function closeMenu(){sideMenu.classList.remove('open');overlay.classList.remove('visible');pageWrap.classList.remove('blurred');}
+  menuBtn.addEventListener('click',()=>sideMenu.classList.contains('open')?closeMenu():openMenu());
+  overlay.addEventListener('click',closeMenu);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu();});
+})();
+</script>
+</body>
+          </html>
