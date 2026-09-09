@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Página de Entrada - Exemplo</title>
+<meta property="og:title" content="Exemplo de Site">
+<meta property="og:description" content="Página de entrada explicativa">
+<meta property="og:image" content="https://files.catbox.moe/pk7r94.jpg">
+<meta property="og:type" content="website">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+:root{
+  --red:#ff0033;
+  --red2:#ff3366;
+  --glow:0 0 18px #ff003388,0 0 40px #ff336644;
+}
+
+html,body{
+  width:100%;height:100%;
+  font-family:'Orbitron',sans-serif;
+  background:#000;
+  color:#fff;
+  overflow:hidden;
+}
+
+canvas{
+  position:fixed;
+  inset:0;
+  width:100%;height:100%;
+  z-index:0;
+  pointer-events:none;
+}
+
+.container{
+  position:relative;
+  z-index:1;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  padding:20px;
+  gap:0;
+}
+
+.avatar-wrap{
+  position:relative;
+  width:clamp(120px,28vw,180px);
+  height:clamp(120px,28vw,180px);
+  margin-bottom:clamp(16px,4vw,28px);
+}
+
+.avatar-wrap::before,
+.avatar-wrap::after{
+  content:'';
+  position:absolute;
+  inset:-4px;
+  border-radius:50%;
+  border:2px solid transparent;
+  border-top-color:var(--red);
+  border-bottom-color:var(--red2);
+  animation:spin 3s linear infinite;
+}
+
+.avatar-wrap::after{
+  inset:-10px;
+  border-top-color:var(--red2);
+  border-bottom-color:var(--red);
+  animation-duration:5s;
+  animation-direction:reverse;
+  opacity:.4;
+}
+
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.avatar{
+  width:100%;height:100%;
+  border-radius:50%;
+  object-fit:cover;
+  border:3px solid #1a0008;
+  box-shadow:var(--glow),inset 0 0 20px #ff003322;
+  display:block;
+}
+
+h1{
+  font-size:clamp(1.4rem,6vw,2.8rem);
+  font-weight:700;
+  color:var(--red);
+  letter-spacing:.12em;
+  line-height:1.1;
+  animation:glitch 4s infinite;
+  text-shadow:0 0 10px var(--red),0 0 25px var(--red2);
+}
+
+@keyframes glitch{
+  0%,90%,100%{text-shadow:0 0 10px var(--red),0 0 25px var(--red2);}
+  92%{text-shadow:3px 0 var(--red),-3px 2px var(--red2);filter:hue-rotate(10deg);}
+  94%{text-shadow:-3px -2px var(--red),3px 2px var(--red2);filter:hue-rotate(-10deg);}
+  96%{text-shadow:3px 2px var(--red),-3px -2px var(--red2);filter:hue-rotate(5deg);}
+}
+
+.subtitle{
+  margin-top:clamp(6px,2vw,12px);
+  font-size:clamp(.65rem,2.5vw,.9rem);
+  color:#888;
+  letter-spacing:.08em;
+  text-shadow:0 0 8px #ff003344;
+}
+
+.enter-btn{
+  margin-top:clamp(24px,6vw,44px);
+  padding:clamp(11px,3vw,15px) clamp(28px,8vw,42px);
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(.8rem,3vw,1.1rem);
+  font-weight:700;
+  color:#fff;
+  background:linear-gradient(135deg,#cc0028,var(--red),#cc0028);
+  border:1px solid var(--red2);
+  border-radius:10px;
+  cursor:pointer;
+  text-transform:uppercase;
+  letter-spacing:.15em;
+  box-shadow:var(--glow),inset 0 0 12px #66000055;
+  transition:transform .25s,box-shadow .25s,background .25s;
+  position:relative;
+  overflow:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+
+.enter-btn::after{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,51,102,.25),transparent);
+  transform:translateX(-100%);
+  transition:transform .5s;
+}
+
+.enter-btn:hover::after,
+.enter-btn:active::after{transform:translateX(100%);}
+
+.enter-btn:hover{
+  transform:translateY(-3px) scale(1.04);
+  box-shadow:0 0 25px var(--red),0 0 60px var(--red2),inset 0 0 18px #ff000033;
+}
+
+.enter-btn:active{transform:scale(.97);}
+
+footer{
+  position:fixed;
+  bottom:14px;
+  width:100%;
+  text-align:center;
+  font-size:.65rem;
+  color:#444;
+  letter-spacing:.06em;
+  z-index:1;
+}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;}
+}
+</style>
+</head>
+<body>
+
+<canvas id="c"></canvas>
+
+<div class="container">
+  <div class="avatar-wrap">
+    <img class="avatar" src="https://files.catbox.moe/pk7r94.jpg" alt="Avatar" loading="eager">
+  </div>
+  <h1>EXEMPLO DE SITE</h1>
+  <div class="subtitle">Texto explicativo do cabeçalho</div>
+  <button class="enter-btn" onclick="location.href='docs.html'">ENTRAR</button>
+</div>
+
+<footer>&copy; 2025 Texto explicativo do rodapé</footer>
+
+<script>
+(function(){
+  const c=document.getElementById('c');
+  const ctx=c.getContext('2d');
+  let W,H,stars,drops;
+  const RED='rgba(255,0,51,';
+  const isMobile=innerWidth<600;
+
+  function init(){
+    W=c.width=innerWidth;
+    H=c.height=innerHeight;
+    const n=isMobile?60:120;
+    stars=Array.from({length:n},()=>({
+      x:Math.random()*W,y:Math.random()*H,
+      r:Math.random()*1.2+.3,
+      o:Math.random(),d:Math.random()*.01+.004
+    }));
+    const cols=isMobile?20:40;
+    drops=Array.from({length:cols},(_,i)=>({
+      x:(W/cols)*i,y:Math.random()*-H,
+      s:Math.random()*8+9,sp:Math.random()*1.5+.8
+    }));
+  }
+
+  let last=0;
+  function draw(ts){
+    if(ts-last<33){requestAnimationFrame(draw);return;}
+    last=ts;
+    ctx.clearRect(0,0,W,H);
+
+    for(const s of stars){
+      s.o+=s.d; if(s.o>1||s.o<0)s.d*=-1;
+      ctx.beginPath();
+      ctx.arc(s.x,s.y,s.r,0,6.28);
+      ctx.fillStyle='rgba(255,255,255,'+s.o.toFixed(2)+')';
+      ctx.fill();
+    }
+
+    ctx.font='bold {s}px Orbitron,monospace';
+    for(const d of drops){
+      ctx.font=`bold ${d.s}px monospace`;
+      ctx.fillStyle=RED+'.18)';
+      ctx.fillText(Math.random()>.5?'1':'0',d.x,d.y);
+      d.y+=d.sp;
+      if(d.y>H)d.y=Math.random()*-80;
+    }
+    requestAnimationFrame(draw);
+  }
+
+  init();
+  requestAnimationFrame(draw);
+  let ro;
+  window.addEventListener('resize',()=>{clearTimeout(ro);ro=setTimeout(init,200);});
+})();
+</script>
+
+</body>
+</html>
